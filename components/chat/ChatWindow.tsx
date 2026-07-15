@@ -1,4 +1,35 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { sendMessage, getMessages } from "@/lib/chat";
+
 export default function ChatWindow() {
+  const [text, setText] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+
+  async function loadMessages() {
+    const { data } = await getMessages();
+    if (data) setMessages(data);
+  }
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
+
+  async function handleSend() {
+    if (!text.trim()) return;
+
+    const { error } = await sendMessage(text);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setText("");
+    loadMessages();
+  }
+
   return (
     <main
       style={{
@@ -9,71 +40,72 @@ export default function ChatWindow() {
         color: "white",
       }}
     >
-      {/* Header */}
       <div
         style={{
           padding: "20px",
           borderBottom: "1px solid #374151",
-          fontSize: "20px",
           fontWeight: "bold",
         }}
       >
-        🤖 AI Assistant
+        💬 General Chat
       </div>
 
-      {/* Messages */}
       <div
         style={{
           flex: 1,
+          overflowY: "auto",
           padding: "20px",
         }}
       >
-        <div
-          style={{
-            background: "#1f2937",
-            padding: "12px 16px",
-            borderRadius: "12px",
-            width: "fit-content",
-          }}
-        >
-          👋 Hello Rudraaksh! Welcome to RChat.
-        </div>
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            style={{
+              background: "#1f2937",
+              padding: "12px",
+              borderRadius: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            {msg.message}
+          </div>
+        ))}
       </div>
 
-      {/* Input */}
       <div
         style={{
-          padding: "20px",
-          borderTop: "1px solid #374151",
           display: "flex",
           gap: "10px",
+          padding: "20px",
+          borderTop: "1px solid #374151",
         }}
       >
         <input
-          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
           placeholder="Type a message..."
           style={{
             flex: 1,
             padding: "14px",
             borderRadius: "10px",
             border: "none",
-            outline: "none",
           }}
         />
 
         <button
+          onClick={handleSend}
           style={{
-            padding: "14px 20px",
+            padding: "14px 22px",
             background: "#2563eb",
             color: "white",
             border: "none",
             borderRadius: "10px",
-            cursor: "pointer",
           }}
         >
-          ➤
+          Send
         </button>
       </div>
     </main>
   );
 }
+
