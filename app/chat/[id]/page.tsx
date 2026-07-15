@@ -1,3 +1,6 @@
+import { sendDirectMessage } from "@/lib/directMessages";
+import { supabase } from "@/lib/supabase";
+
 "use client";
 
 import { useState } from "react";
@@ -58,16 +61,41 @@ export default function DirectChat({
         />
 
         <button
-          style={{
-            padding: "14px 24px",
-            background: "#2563eb",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-          }}
-        >
-          Send
-        </button>
+  onClick={async () => {
+    if (!message.trim()) return;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    const { error } = await sendDirectMessage(
+      params.id,
+      user.id,
+      message
+    );
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setMessage("");
+  }}
+  style={{
+    padding: "14px 24px",
+    background: "#2563eb",
+    color: "white",
+    border: "none",
+    borderRadius: "10px",
+  }}
+>
+  Send
+</button>
       </div>
     </main>
   );
