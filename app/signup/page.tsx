@@ -5,11 +5,17 @@ import { signUp } from "@/lib/auth";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function handleSignup() {
-    const { error } = await signUp(email, password);
+    const { error } = await signUp(
+  email,
+  password,
+  name,
+  username
+);
 
     if (error) {
       alert(error.message);
@@ -45,6 +51,17 @@ export default function SignupPage() {
           onChange={(e) => setName(e.target.value)}
           style={{ width: "100%", marginTop: 15, padding: 14 }}
         />
+ 
+        <input
+    placeholder="Username"
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+    style={{
+    width: "100%",
+    marginTop: 15,
+    padding: 14,
+     }}
+     />
 
         <input
           placeholder="Email"
