@@ -57,18 +57,39 @@ export default function Home() {
           <p>Your AI assistant is almost ready.</p>
         </div>
 
-        <input
-          type="text"
-          placeholder="Type your message..."
-          style={{
-            width: "100%",
-            padding: "15px",
-            borderRadius: "10px",
-            border: "none",
-            outline: "none",
-            fontSize: "16px",
-          }}
-        />
+        <div
+  style={{
+    display: "flex",
+    gap: "10px",
+  }}
+>
+  <input
+    type="text"
+    placeholder="Type your message..."
+    style={{
+      flex: 1,
+      padding: "15px",
+      borderRadius: "10px",
+      border: "none",
+      outline: "none",
+      fontSize: "16px",
+    }}
+  />
+
+  <button
+    style={{
+      padding: "15px 25px",
+      border: "none",
+      borderRadius: "10px",
+      background: "#3b82f6",
+      color: "white",
+      cursor: "pointer",
+      fontWeight: "bold",
+    }}
+  >
+    Send
+  </button>
+</div>
       </div>
     </main>
   );
