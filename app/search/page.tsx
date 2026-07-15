@@ -1,12 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { searchUsers } from "@/lib/users";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<any[]>([]);
-
+ const router = useRouter();
   async function handleSearch() {
     const { data } = await searchUsers(query);
     if (data) setUsers(data);
@@ -51,18 +52,20 @@ export default function SearchPage() {
 
       <div style={{ marginTop: "20px" }}>
         {users.map((user) => (
-          <div
-            key={user.id}
-            style={{
-              padding: "15px",
-              background: "#1f2937",
-              borderRadius: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            👤 {user.username}
-          </div>
-        ))}
+  <div
+    key={user.id}
+    onClick={() => router.push(`/chat/${user.id}`)}
+    style={{
+      padding: "15px",
+      background: "#1f2937",
+      borderRadius: "10px",
+      marginBottom: "10px",
+      cursor: "pointer",
+    }}
+  >
+    👤 {user.username}
+  </div>
+))}
       </div>
     </main>
   );
