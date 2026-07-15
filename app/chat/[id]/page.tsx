@@ -1,6 +1,4 @@
 "use client";
-import { useState } from "react";
-"use client";
 
 import { useState } from "react";
 import { sendDirectMessage } from "@/lib/directMessages";
