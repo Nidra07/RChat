@@ -19,7 +19,7 @@ export default function LoginPage() {
     }
 
     alert("Login successful 🎉");
-    router.push("/");
+    router.push("/chat");
   }
 
   return (
