@@ -20,3 +20,21 @@ export async function sendDirectMessage(
   });
 }
 
+export function subscribeToDirectMessages(
+  conversationId: string,
+  callback: () => void
+) {
+  return supabase
+    .channel(`dm-${conversationId}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "direct_messages",
+        filter: `conversation_id=eq.${conversationId}`,
+      },
+      callback
+    )
+    .subscribe();
+}
