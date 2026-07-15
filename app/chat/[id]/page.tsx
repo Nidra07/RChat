@@ -42,7 +42,12 @@ alert("Send button clicked");
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
+   if (!user) {
+  alert("User not logged in");
+  return;
+}
+
+alert(`Logged in as ${user.id}`);
 
     const { error } = await sendDirectMessage(
       params.id,
@@ -50,9 +55,11 @@ alert("Send button clicked");
       message
     );
 
-    if (!error) {
-      setMessage("");
-    }
+   if (error) {
+  alert(error.message);
+} else {
+  alert("Message saved!");
+}
   }
 
   return (
