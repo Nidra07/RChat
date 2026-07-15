@@ -121,17 +121,9 @@ export default function ChatWindow() {
   );
 }
 
-export function subscribeToMessages(callback: () => void) {
-  return supabase
-    .channel("messages")
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-      },
-      callback
-    )
-    .subscribe();
-}
+import {
+  sendMessage,
+  getMessages,
+  subscribeToMessages,
+} from "@/lib/chat";
+
