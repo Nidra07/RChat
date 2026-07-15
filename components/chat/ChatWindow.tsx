@@ -121,9 +121,3 @@ export default function ChatWindow() {
   );
 }
 
-import {
-  sendMessage,
-  getMessages,
-  subscribeToMessages,
-} from "@/lib/chat";
-

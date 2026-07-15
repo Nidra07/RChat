@@ -22,3 +22,17 @@ export async function getMessages() {
     .order("created_at", { ascending: true });
 }
 
+export function subscribeToMessages(callback: () => void) {
+  return supabase
+    .channel("messages")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+      },
+      callback
+    )
+    .subscribe();
+}
