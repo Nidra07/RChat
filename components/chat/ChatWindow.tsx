@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { sendMessage, getMessages } from "@/lib/chat";
+import {
+  sendMessage,
+  getMessages,
+  subscribeToMessages,
+} from "@/lib/chat";
 
 export default function ChatWindow() {
   const [text, setText] = useState("");
@@ -13,8 +17,16 @@ export default function ChatWindow() {
   }
 
   useEffect(() => {
+  loadMessages();
+
+  const channel = subscribeToMessages(() => {
     loadMessages();
-  }, []);
+  });
+
+  return () => {
+    channel.unsubscribe();
+  };
+}, []);
 
   async function handleSend() {
     if (!text.trim()) return;
@@ -109,3 +121,17 @@ export default function ChatWindow() {
   );
 }
 
+export function subscribeToMessages(callback: () => void) {
+  return supabase
+    .channel("messages")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+      },
+      callback
+    )
+    .subscribe();
+}
