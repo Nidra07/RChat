@@ -1,9 +1,10 @@
-import { sendDirectMessage } from "@/lib/directMessages";
-import { supabase } from "@/lib/supabase";
-
+"use client";
+import { useState } from "react";
 "use client";
 
 import { useState } from "react";
+import { sendDirectMessage } from "@/lib/directMessages";
+import { supabase } from "@/lib/supabase";
 
 export default function DirectChat({
   params,
