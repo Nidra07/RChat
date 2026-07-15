@@ -1,4 +1,27 @@
+"use client";
+
+import { useState } from "react";
+import { signIn } from "@/lib/auth";
+import { useRouter } from "next/navigation";
+
 export default function LoginPage() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleLogin() {
+    const { error } = await signIn(email, password);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Login successful 🎉");
+    router.push("/");
+  }
+
   return (
     <main
       style={{
@@ -11,47 +34,41 @@ export default function LoginPage() {
     >
       <div
         style={{
-          width: "380px",
+          width: "400px",
           background: "#1f2937",
           padding: "30px",
           borderRadius: "16px",
           color: "white",
         }}
       >
-        <h1 style={{ textAlign: "center" }}>🔐 Login to RChat</h1>
+        <h1>🔐 Login to RChat</h1>
 
         <input
           type="email"
           placeholder="Email"
-          style={{
-            width: "100%",
-            marginTop: "20px",
-            padding: "14px",
-            borderRadius: "8px",
-          }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{ width: "100%", marginTop: 20, padding: 14 }}
         />
 
         <input
           type="password"
           placeholder="Password"
-          style={{
-            width: "100%",
-            marginTop: "15px",
-            padding: "14px",
-            borderRadius: "8px",
-          }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", marginTop: 15, padding: 14 }}
         />
 
         <button
+          onClick={handleLogin}
           style={{
             width: "100%",
-            marginTop: "20px",
-            padding: "14px",
-            borderRadius: "8px",
-            border: "none",
+            marginTop: 20,
+            padding: 14,
             background: "#2563eb",
             color: "white",
-            fontWeight: "bold",
+            border: "none",
+            borderRadius: "10px",
           }}
         >
           Login
