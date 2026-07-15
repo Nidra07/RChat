@@ -34,6 +34,8 @@ export default function DirectChat({
   }, []);
 
   async function handleSend() {
+alert("Send button clicked");
+
     if (!message.trim()) return;
 
     const {
