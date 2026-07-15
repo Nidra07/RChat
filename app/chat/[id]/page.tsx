@@ -1,7 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { sendDirectMessage } from "@/lib/directMessages";
+import { useEffect, useState } from "react";
+import {
+  getDirectMessages,
+  sendDirectMessage,
+  subscribeToDirectMessages,
+} from "@/lib/directMessages";
 import { supabase } from "@/lib/supabase";
 
 export default function DirectChat({
@@ -10,6 +14,44 @@ export default function DirectChat({
   params: { id: string };
 }) {
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+
+  async function loadMessages() {
+    const { data } = await getDirectMessages(params.id);
+    if (data) setMessages(data);
+  }
+
+  useEffect(() => {
+    loadMessages();
+
+    const channel = subscribeToDirectMessages(params.id, () => {
+      loadMessages();
+    });
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
+  async function handleSend() {
+    if (!message.trim()) return;
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { error } = await sendDirectMessage(
+      params.id,
+      user.id,
+      message
+    );
+
+    if (!error) {
+      setMessage("");
+    }
+  }
 
   return (
     <main
@@ -34,10 +76,23 @@ export default function DirectChat({
       <div
         style={{
           flex: 1,
+          overflowY: "auto",
           padding: "20px",
         }}
       >
-        Conversation ID: {params.id}
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            style={{
+              background: "#1f2937",
+              padding: "12px",
+              borderRadius: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            {msg.message}
+          </div>
+        ))}
       </div>
 
       <div
@@ -60,41 +115,17 @@ export default function DirectChat({
         />
 
         <button
-  onClick={async () => {
-    if (!message.trim()) return;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
-
-    const { error } = await sendDirectMessage(
-      params.id,
-      user.id,
-      message
-    );
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    setMessage("");
-  }}
-  style={{
-    padding: "14px 24px",
-    background: "#2563eb",
-    color: "white",
-    border: "none",
-    borderRadius: "10px",
-  }}
->
-  Send
-</button>
+          onClick={handleSend}
+          style={{
+            padding: "14px 24px",
+            background: "#2563eb",
+            color: "white",
+            border: "none",
+            borderRadius: "10px",
+          }}
+        >
+          Send
+        </button>
       </div>
     </main>
   );
