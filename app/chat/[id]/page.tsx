@@ -17,9 +17,13 @@ export default function DirectChat({
   const [messages, setMessages] = useState<any[]>([]);
 
   async function loadMessages() {
-    const { data } = await getDirectMessages(params.id);
-    if (data) setMessages(data);
-  }
+  const { data, error } = await getDirectMessages(params.id);
+
+  alert("DATA: " + JSON.stringify(data));
+  alert("ERROR: " + JSON.stringify(error));
+
+  if (data) setMessages(data);
+}
 
   useEffect(() => {
     loadMessages();
