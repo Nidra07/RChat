@@ -44,56 +44,63 @@ export default function Home() {
           chat.user1_profile?.id === userId ? chat.user2_profile : chat.user1_profile;
 
         return (
-          <div
-            key={chat.id}
-            onClick={() => router.push(`/chat/${chat.id}`)}
-            style={{
-              background: "#1f2937",
-              padding: 16,
-              borderRadius: 12,
-              marginTop: 12,
-              cursor: "pointer",
-            }}
-          >
-            <h3>{other?.full_name || "Unknown User"}</h3>
-
-<p style={{ color: "#9CA3AF", marginTop: 4 }}>
-  {chat.last_message || "No messages yet"}
-</p>
-
-<small style={{ color: "#6B7280" }}>
-  {chat.last_message_at
-    ? new Date(chat.last_message_at).toLocaleString()
-    : ""}
-</small>
-
-<p>@{other?.username || "unknown"}</p>
-
-<p
+         <div
+  key={chat.id}
+  onClick={() => router.push(`/chat/${chat.id}`)}
   style={{
-    color: "#9CA3AF",
-    marginTop: 6,
-    fontSize: 14,
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    background: "#1f2937",
+    padding: 16,
+    borderRadius: 14,
+    marginTop: 12,
+    cursor: "pointer",
   }}
 >
-  {chat.last_message || "No messages yet"}
-</p>
+  <img
+    src={
+      other?.avatar_url ||
+      "https://ui-avatars.com/api/?name=" +
+        encodeURIComponent(other?.full_name || "User")
+    }
+    style={{
+      width: 56,
+      height: 56,
+      borderRadius: "50%",
+      objectFit: "cover",
+    }}
+  />
 
-<p
-  style={{
-    color: "#6B7280",
-    fontSize: 12,
-    marginTop: 4,
-  }}
->
-  {chat.last_message_at
-    ? new Date(chat.last_message_at).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : ""}
-</p>
-          </div>
+  <div style={{ flex: 1 }}>
+    <h3 style={{ margin: 0 }}>
+      {other?.full_name || "Unknown User"}
+    </h3>
+
+    <p
+      style={{
+        margin: "4px 0",
+        color: "#9CA3AF",
+      }}
+    >
+      {chat.last_message || "No messages yet"}
+    </p>
+  </div>
+
+  <div
+    style={{
+      color: "#6B7280",
+      fontSize: 12,
+    }}
+  >
+    {chat.last_message_at
+      ? new Date(chat.last_message_at).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : ""}
+  </div>
+</div>>
         );
       })}
     </main>
