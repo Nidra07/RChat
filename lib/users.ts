@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-export async function searchUsers(query: string) {
+export async function searchUsers(search: string) {
   return await supabase
     .from("profiles")
     .select("*")
