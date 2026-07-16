@@ -5,16 +5,19 @@ export async function getConversations(userId: string) {
     .from("conversations")
     .select(`
       *,
-      user1_profile:profiles!conversations_user1_fkey(
-        id,
-        full_name,
-        username
-      ),
-      user2_profile:profiles!conversations_user2_fkey(
-        id,
-        full_name,
-        username
-      )
+     user1_profile:profiles!conversations_user1_fkey(
+  id,
+  full_name,
+  username,
+  avatar_url
+),
+user2_profile:profiles!conversations_user2_fkey(
+  id,
+  full_name,
+  username,
+  avatar_url
+     )
+     )
     `)
     .or(`user1.eq.${userId},user2.eq.${userId}`)
     .order("created_at", { ascending: false });
