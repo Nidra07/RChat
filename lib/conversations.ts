@@ -1,32 +1,36 @@
 import { supabase } from "./supabase";
 
+export async function getConversations(userId: string) {
+  return await supabase
+    .from("conversations")
+    .select("*")
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .order("updated_at", { ascending: false });
+}
+
 export async function getOrCreateConversation(
-  currentUserId: string,
-  otherUserId: string
+  user1: string,
+  user2: string
 ) {
-  const { data: existing } = await supabase
+  const { data } = await supabase
     .from("conversations")
     .select("*")
     .or(
-      `and(user1.eq.${currentUserId},user2.eq.${otherUserId}),and(user1.eq.${otherUserId},user2.eq.${currentUserId})`
+      `and(user1_id.eq.${user1},user2_id.eq.${user2}),and(user1_id.eq.${user2},user2_id.eq.${user1})`
     )
-    .maybeSingle();
+    .single();
 
-  if (existing) {
-    return existing.id;
-  }
+  if (data) return data.id;
 
-  const { data, error } = await supabase
+  const { data: created } = await supabase
     .from("conversations")
     .insert({
-      user1: currentUserId,
-      user2: otherUserId,
+      user1_id: user1,
+      user2_id: user2,
     })
     .select()
     .single();
 
-  if (error) throw error;
-
-  return data.id;
+  return created.id;
 }
 
