@@ -3,7 +3,19 @@ import { supabase } from "./supabase";
 export async function getConversations(userId: string) {
   return await supabase
     .from("conversations")
-    .select("*")
+    .select(`
+      *,
+      user1:profiles!conversations_user1_id_fkey(
+        id,
+        full_name,
+        username
+      ),
+      user2:profiles!conversations_user2_id_fkey(
+        id,
+        full_name,
+        username
+      )
+    `)
     .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
     .order("updated_at", { ascending: false });
 }
