@@ -21,13 +21,16 @@ export async function sendDirectMessage(
       message,
     });
 
-  await supabase
-    .from("conversations")
-    .update({
-      last_message: message,
-      last_message_at: new Date().toISOString(),
-    })
-    .eq("id", conversationId);
+  if (!result.error) {
+    await supabase
+      .from("conversations")
+      .update({
+        last_message: message,
+        last_message_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", conversationId);
+  }
 
   return result;
 }
