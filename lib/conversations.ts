@@ -1,16 +1,32 @@
 import { supabase } from "./supabase";
 
-export async function createConversation(user1: string, user2: string) {
-  return await supabase.from("conversations").insert({
-    user1,
-    user2,
-  });
-}
-
-export async function getConversations(userId: string) {
-  return await supabase
+export async function getOrCreateConversation(
+  currentUserId: string,
+  otherUserId: string
+) {
+  const { data: existing } = await supabase
     .from("conversations")
     .select("*")
-    .or(`user1.eq.${userId},user2.eq.${userId}`);
+    .or(
+      `and(user1.eq.${currentUserId},user2.eq.${otherUserId}),and(user1.eq.${otherUserId},user2.eq.${currentUserId})`
+    )
+    .maybeSingle();
+
+  if (existing) {
+    return existing.id;
+  }
+
+  const { data, error } = await supabase
+    .from("conversations")
+    .insert({
+      user1: currentUserId,
+      user2: otherUserId,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data.id;
 }
 
