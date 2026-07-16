@@ -22,9 +22,6 @@ export default function DirectChat({
   async function loadMessages() {
   const { data, error } = await getDirectMessages(id);
 
-  alert("DATA: " + JSON.stringify(data));
-  alert("ERROR: " + JSON.stringify(error));
-
   if (data) setMessages(data);
 }
 
