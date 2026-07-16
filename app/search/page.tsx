@@ -1,16 +1,43 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { searchUsers } from "@/lib/users";
+import { getOrCreateConversation } from "@/lib/conversations";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<any[]>([]);
- const router = useRouter();
-  async function handleSearch() {
-    const { data } = await searchUsers(query);
-    if (data) setUsers(data);
+  const [myId, setMyId] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setMyId(data.user.id);
+    });
+  }, []);
+
+  useEffect(() => {
+    async function load() {
+      if (!query.trim()) {
+        setUsers([]);
+        return;
+      }
+
+      const { data } = await searchUsers(query);
+
+      if (data) {
+        setUsers(data.filter((u) => u.id !== myId));
+      }
+    }
+
+    load();
+  }, [query, myId]);
+
+  async function openChat(user: any) {
+    const id = await getOrCreateConversation(myId, user.id);
+    router.push(`/chat/${id}`);
   }
 
   return (
@@ -19,54 +46,39 @@ export default function SearchPage() {
         minHeight: "100vh",
         background: "#111827",
         color: "white",
-        padding: "20px",
+        padding: 20,
       }}
     >
       <h1>🔍 Search Users</h1>
 
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter username..."
-          style={{
-            flex: 1,
-            padding: "14px",
-            borderRadius: "10px",
-          }}
-        />
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search username..."
+        style={{
+          width: "100%",
+          padding: 14,
+          borderRadius: 10,
+          marginTop: 20,
+        }}
+      />
 
-        <button
-          onClick={handleSearch}
+      {users.map((user) => (
+        <div
+          key={user.id}
+          onClick={() => openChat(user)}
           style={{
-            padding: "14px 20px",
-            borderRadius: "10px",
-            border: "none",
-            background: "#2563eb",
-            color: "white",
+            background: "#1f2937",
+            padding: 16,
+            borderRadius: 12,
+            marginTop: 12,
+            cursor: "pointer",
           }}
         >
-          Search
-        </button>
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        {users.map((user) => (
-  <div
-    key={user.id}
-    onClick={() => router.push(`/chat/${user.id}`)}
-    style={{
-      padding: "15px",
-      background: "#1f2937",
-      borderRadius: "10px",
-      marginBottom: "10px",
-      cursor: "pointer",
-    }}
-  >
-    👤 {user.username}
-  </div>
-))}
-      </div>
+          <h3>{user.full_name}</h3>
+          <p>@{user.username}</p>
+        </div>
+      ))}
     </main>
   );
 }
