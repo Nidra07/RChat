@@ -56,7 +56,18 @@ export default function Home() {
             }}
           >
             <h3>{other?.full_name || "Unknown User"}</h3>
-            <p>@{other?.username || "unknown"}</p>
+
+<p style={{ color: "#9CA3AF", marginTop: 4 }}>
+  {chat.last_message || "No messages yet"}
+</p>
+
+<small style={{ color: "#6B7280" }}>
+  {chat.last_message_at
+    ? new Date(chat.last_message_at).toLocaleString()
+    : ""}
+</small>
+
+<p>@{other?.username || "unknown"}</p>
           </div>
         );
       })}

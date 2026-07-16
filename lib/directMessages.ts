@@ -8,16 +8,38 @@ export async function getDirectMessages(conversationId: string) {
     .order("created_at", { ascending: true });
 }
 
+import { supabase } from "./supabase";
+
+export async function getDirectMessages(conversationId: string) {
+  return await supabase
+    .from("direct_messages")
+    .select("*")
+    .eq("conversation_id", conversationId)
+    .order("created_at", { ascending: true });
+}
+
 export async function sendDirectMessage(
   conversationId: string,
   senderId: string,
   message: string
 ) {
-  return await supabase.from("direct_messages").insert({
-    conversation_id: conversationId,
-    sender_id: senderId,
-    message,
-  });
+  const result = await supabase
+    .from("direct_messages")
+    .insert({
+      conversation_id: conversationId,
+      sender_id: senderId,
+      message,
+    });
+
+  await supabase
+    .from("conversations")
+    .update({
+      last_message: message,
+      last_message_at: new Date().toISOString(),
+    })
+    .eq("id", conversationId);
+
+  return result;
 }
 
 export function subscribeToDirectMessages(
