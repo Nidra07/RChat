@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+
 import {
   getDirectMessages,
   sendDirectMessage,
@@ -11,13 +12,15 @@ import { supabase } from "@/lib/supabase";
 export default function DirectChat({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
 
   async function loadMessages() {
-  const { data, error } = await getDirectMessages(params.id);
+  const { data, error } = await getDirectMessages(id);
 
   alert("DATA: " + JSON.stringify(data));
   alert("ERROR: " + JSON.stringify(error));
@@ -28,7 +31,7 @@ export default function DirectChat({
   useEffect(() => {
     loadMessages();
 
-    const channel = subscribeToDirectMessages(params.id, () => {
+    const channel = subscribeToDirectMessages(id, () => {
       loadMessages();
     });
 
@@ -52,7 +55,7 @@ export default function DirectChat({
 
 
     const { error } = await sendDirectMessage(
-      params.id,
+      id,
       user.id,
       message
     );
