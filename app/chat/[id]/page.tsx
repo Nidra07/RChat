@@ -34,7 +34,6 @@ export default function DirectChat({
   }, []);
 
   async function handleSend() {
-alert("Send button clicked");
 
     if (!message.trim()) return;
 
@@ -47,7 +46,6 @@ alert("Send button clicked");
   return;
 }
 
-alert(`Logged in as ${user.id}`);
 
     const { error } = await sendDirectMessage(
       params.id,
@@ -58,7 +56,8 @@ alert(`Logged in as ${user.id}`);
    if (error) {
   alert(error.message);
 } else {
-  alert("Message saved!");
+  setMessage("");
+  loadMessages();
 }
   }
 
