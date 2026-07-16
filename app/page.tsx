@@ -99,7 +99,9 @@ export default function Home() {
           minute: "2-digit",
         })
       : ""}
+  </div>
 </div>
+        );>
         );
       })}
     </main>
