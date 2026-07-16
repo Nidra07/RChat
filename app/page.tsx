@@ -68,6 +68,31 @@ export default function Home() {
 </small>
 
 <p>@{other?.username || "unknown"}</p>
+
+<p
+  style={{
+    color: "#9CA3AF",
+    marginTop: 6,
+    fontSize: 14,
+  }}
+>
+  {chat.last_message || "No messages yet"}
+</p>
+
+<p
+  style={{
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 4,
+  }}
+>
+  {chat.last_message_at
+    ? new Date(chat.last_message_at).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : ""}
+</p>
           </div>
         );
       })}
