@@ -17,7 +17,6 @@ user2_profile:profiles!conversations_user2_fkey(
   username,
   avatar_url
      )
-     )
     `)
     .or(`user1.eq.${userId},user2.eq.${userId}`)
     .order("created_at", { ascending: false });
