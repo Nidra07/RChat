@@ -41,7 +41,7 @@ export default function Home() {
 
       {chats.map((chat) => {
         const other =
-          chat.user1?.id === userId ? chat.user2 : chat.user1;
+          chat.user1_profile?.id === userId ? chat.user2_profile : chat.user1_profile;
 
         return (
           <div
